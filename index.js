@@ -30,6 +30,11 @@ app.use(session({
 // flash 中间件，用来显示通知
 app.use(flash());
 
+app.use(require('express-formidable')({
+    uploadDir: path.join(__dirname, 'public/img'),
+    keepExtensions: true//保留后缀
+}));
+
 //设置模板全局变量
 app.locals.blog = {
     title: pkg.name,
@@ -40,8 +45,8 @@ app.locals.blog = {
 app.use(function (req,res,next) {
     //所有请求都要通过当前中间件设置locals
     res.locals.user = req.session.user;
-    res.locals.success = req.flash('success').toString();
-    res.locals.error = req.flash('error').toString();
+    res.locals.success = req.flash('success').toString();//来自flash
+    res.locals.error = req.flash('error').toString();//来自flash
     next();
 })
 // 路由
