@@ -27,9 +27,23 @@ app.use(session({
         url: config.mongodb// mongodb 地址
     })
 }));
-// flash 中间价，用来显示通知
+// flash 中间件，用来显示通知
 app.use(flash());
 
+//设置模板全局变量
+app.locals.blog = {
+    title: pkg.name,
+    description: pkg.description
+};
+
+//添加模板所需的三个局部变量
+app.use(function (req,res,next) {
+    //所有请求都要通过当前中间件设置locals
+    res.locals.user = req.session.user;
+    res.locals.success = req.flash('success').toString();
+    res.locals.error = req.flash('error').toString();
+    next();
+})
 // 路由
 routes(app);
 
