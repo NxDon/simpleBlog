@@ -3,9 +3,12 @@ var express = require('express');
 var session = require('express-session');
 var MongoStore = require('connect-mongo')(session);
 var flash = require('connect-flash');
-var config = require('config-lite')(__dirname);;
+var config = require('config-lite')(__dirname);
+;
 var routes = require('./routes');
 var pkg = require('./package');
+var winston = require('winston');
+var expressWinston = require('express-winston');
 
 var app = express();
 
@@ -42,16 +45,49 @@ app.locals.blog = {
 };
 
 //添加模板所需的三个局部变量
-app.use(function (req,res,next) {
+app.use(function (req, res, next) {
     //所有请求都要通过当前中间件设置locals
     res.locals.user = req.session.user;
     res.locals.success = req.flash('success').toString();//来自flash
     res.locals.error = req.flash('error').toString();//来自flash
     next();
 })
+
+// 正常请求的日志
+app.use(expressWinston.logger({
+    transports: [
+        new (winston.transports.Console)({
+            json: true,
+            colorize: true
+        }),
+        new winston.transports.File({
+            filename: 'logs/success.log'
+        })
+    ]
+}));
+
 // 路由
 routes(app);
 
+// 错误请求的日志
+app.use(expressWinston.errorLogger({
+    transports: [
+        new winston.transports.Console({
+            json: true,
+            colorize: true
+        }),
+        new winston.transports.File({
+            filename: 'logs/error.log'
+        })
+    ]
+}));
+
+// error page
+app.use(function (err, req, res, next) {
+    res.render('error', {
+        error: err
+    });
+});
 // 监听端口，启动程序
 app.listen(config.port, function () {
     console.log(`${pkg.name} listening on port ${config.port}`);

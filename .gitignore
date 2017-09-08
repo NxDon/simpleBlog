@@ -9,3 +9,6 @@ out
 gen
 /node_modules
 package-lock.json
+npm-debug.log
+node_modules
+coverage
