@@ -5,6 +5,7 @@ Post.plugin('contentToHtml', {
     afterFind: function (posts) {
         return posts.map(function (post) {
             post.content = marked(post.content);
+            console.log('************'+post.content);
             return post;
         })
     },

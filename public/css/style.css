@@ -5,6 +5,11 @@ body {
     height: 100%;
     margin: 0 auto;
     padding-top: 40px;
+
+}
+code,pre,p {
+    word-break:break-all;
+    white-space: pre-wrap;
 }
 
 a:hover {

@@ -32,7 +32,6 @@ router.post('/', checkNotLogin, function (req, res, next) {
             req.flash('success', 'login success');
             delete user.password;
             
-            console.log(user);
             req.session.user = user;
 
             res.redirect('/posts');
